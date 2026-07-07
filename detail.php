@@ -20,6 +20,9 @@ if (!$r || (!isAdmin() && $r['user_id'] !== $_SESSION['user_id'])) {
 
 $active = isAdmin() ? 'admin_dashboard' : 'dashboard';
 $balikUrl = isAdmin() ? 'admin/dashboard.php' : 'dashboard.php';
+
+// Pelapor boleh edit/hapus laporannya sendiri hanya selagi masih "Menunggu"
+$bolehEditHapusPelapor = !isAdmin() && $r['user_id'] === $_SESSION['user_id'] && $r['status'] === 'Menunggu';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -34,13 +37,12 @@ $balikUrl = isAdmin() ? 'admin/dashboard.php' : 'dashboard.php';
     <?php include 'includes/sidebar.php'; ?>
 
     <main class="main">
-        <div class="topbar">
-            <div>
-                <span class="eyebrow mono"><?= bersih($r['kode_tiket']) ?></span>
-                <h1><?= bersih($r['nama_fasilitas']) ?></h1>
-            </div>
-            <a href="<?= $balikUrl ?>" class="btn btn-outline">&larr; Kembali</a>
-        </div>
+        <?php
+        $pageEyebrow  = bersih($r['kode_tiket']);
+        $pageTitle    = bersih($r['nama_fasilitas']);
+        $headerAction = '<a href="' . $balikUrl . '" class="btn btn-outline">&larr; Kembali</a>';
+        include 'includes/header.php';
+        ?>
 
         <div class="form-card" style="max-width:760px;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
@@ -76,6 +78,17 @@ $balikUrl = isAdmin() ? 'admin/dashboard.php' : 'dashboard.php';
                 </div>
             <?php endif; ?>
 
+            <?php if ($bolehEditHapusPelapor): ?>
+                <div class="ticket-actions" style="margin-top:22px;">
+                    <a href="edit.php?id=<?= $r['id'] ?>" class="btn btn-outline">Edit laporan</a>
+                    <form method="post" action="hapus.php" style="display:inline;"
+                          onsubmit="return confirm('Hapus laporan <?= bersih($r['kode_tiket']) ?>? Tindakan ini tidak dapat dibatalkan.');">
+                        <input type="hidden" name="id" value="<?= $r['id'] ?>">
+                        <button type="submit" class="btn btn-danger">Hapus laporan</button>
+                    </form>
+                </div>
+            <?php endif; ?>
+
             <?php if (isAdmin()): ?>
                 <hr style="border:none;border-top:1px dashed var(--line);margin:22px 0;">
                 <h3 style="font-size:1rem;margin-bottom:12px;">Perbarui status</h3>
@@ -95,9 +108,13 @@ $balikUrl = isAdmin() ? 'admin/dashboard.php' : 'dashboard.php';
                     </div>
                     <button type="submit" class="btn btn-primary">Simpan perubahan</button>
                 </form>
+
+                <hr style="border:none;border-top:1px dashed var(--line);margin:22px 0;">
+                <form method="post" action="hapus.php"
+                      onsubmit="return confirm('Hapus laporan <?= bersih($r['kode_tiket']) ?> secara permanen?');">
+                    <input type="hidden" name="id" value="<?= $r['id'] ?>">
+                    <button type="submit" class="btn btn-danger">Hapus laporan ini</button>
+                </form>
             <?php endif; ?>
         </div>
-    </main>
-</div>
-</body>
-</html>
+        <?php include 'includes/footer.php'; ?>

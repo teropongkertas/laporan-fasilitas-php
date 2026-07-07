@@ -63,3 +63,24 @@ function statusClass(string $status): string
         default    => 'badge',
     };
 }
+
+/**
+ * Simpan pesan notifikasi (alert) ke session, akan tampil sekali
+ * di halaman berikutnya lewat includes/header.php.
+ * $tipe: 'success' | 'error'
+ */
+function setFlash(string $tipe, string $pesan): void
+{
+    $_SESSION['flash'] = ['tipe' => $tipe, 'pesan' => $pesan];
+}
+
+/** Ambil & hapus pesan notifikasi yang tersimpan (tampil sekali saja) */
+function getFlash(): ?array
+{
+    if (!empty($_SESSION['flash'])) {
+        $flash = $_SESSION['flash'];
+        unset($_SESSION['flash']);
+        return $flash;
+    }
+    return null;
+}

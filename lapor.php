@@ -52,7 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
             $stmt->execute([$kode, $_SESSION['user_id'], $nama_fasilitas, $kategori, $lokasi, $tingkat, $deskripsi, $fotoNama]);
 
-            header('Location: dashboard.php?sukses=1');
+            setFlash('success', 'Laporan berhasil dikirim. Petugas akan segera meninjau.');
+            header('Location: dashboard.php');
             exit;
         }
     }
@@ -71,15 +72,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php include 'includes/sidebar.php'; ?>
 
     <main class="main">
-        <div class="topbar">
-            <div>
-                <span class="eyebrow">Surat perintah kerja baru</span>
-                <h1>Laporkan fasilitas rusak</h1>
-            </div>
-        </div>
+        <?php
+        $pageEyebrow = 'Surat perintah kerja baru';
+        $pageTitle   = 'Laporkan fasilitas rusak';
+        include 'includes/header.php';
+        ?>
 
         <?php if ($error): ?>
-            <div class="alert alert-error"><?= $error ?></div>
+            <div class="alert alert-error"><span><?= $error ?></span></div>
         <?php endif; ?>
 
         <form class="form-card" method="post" enctype="multipart/form-data">
@@ -130,7 +130,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <button type="submit" class="btn btn-primary">Kirim laporan</button>
         </form>
-    </main>
-</div>
-</body>
-</html>
+        <?php include 'includes/footer.php'; ?>

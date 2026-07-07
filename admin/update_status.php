@@ -17,6 +17,9 @@ $statusValid = ['Menunggu','Diproses','Selesai','Ditolak'];
 if ($id > 0 && in_array($status, $statusValid, true)) {
     $stmt = $pdo->prepare('UPDATE reports SET status = ?, catatan_admin = ? WHERE id = ?');
     $stmt->execute([$status, $catatan_admin, $id]);
+    setFlash('success', 'Status laporan berhasil diperbarui.');
+} else {
+    setFlash('error', 'Gagal memperbarui status. Data tidak valid.');
 }
 
 header('Location: ../detail.php?id=' . $id);

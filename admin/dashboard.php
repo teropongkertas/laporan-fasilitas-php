@@ -49,12 +49,11 @@ $stat = $pdo->query(
     <?php include '../includes/sidebar.php'; ?>
 
     <main class="main">
-        <div class="topbar">
-            <div>
-                <span class="eyebrow">Panel petugas</span>
-                <h1>Semua laporan kerusakan</h1>
-            </div>
-        </div>
+        <?php
+        $pageEyebrow = 'Panel petugas';
+        $pageTitle   = 'Semua laporan kerusakan';
+        include '../includes/header.php';
+        ?>
 
         <div class="stat-row">
             <div class="stat"><div class="n"><?= (int) $stat['total'] ?></div><div class="l">Total</div></div>
@@ -94,24 +93,29 @@ $stat = $pdo->query(
                         <th>Tingkat</th>
                         <th>Status</th>
                         <th>Tanggal</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                 <?php foreach ($laporan as $r): ?>
-                    <tr style="cursor:pointer;" onclick="window.location='../detail.php?id=<?= $r['id'] ?>'">
-                        <td class="mono"><?= bersih($r['kode_tiket']) ?></td>
-                        <td><?= bersih($r['nama_fasilitas']) ?></td>
-                        <td><?= bersih($r['lokasi']) ?></td>
-                        <td><?= bersih($r['pelapor_nama']) ?></td>
-                        <td><?= bersih($r['tingkat_kerusakan']) ?></td>
-                        <td><span class="<?= statusClass($r['status']) ?>"><?= $r['status'] ?></span></td>
-                        <td><?= date('d M Y', strtotime($r['created_at'])) ?></td>
+                    <tr>
+                        <td class="mono" style="cursor:pointer;" onclick="window.location='../detail.php?id=<?= $r['id'] ?>'"><?= bersih($r['kode_tiket']) ?></td>
+                        <td style="cursor:pointer;" onclick="window.location='../detail.php?id=<?= $r['id'] ?>'"><?= bersih($r['nama_fasilitas']) ?></td>
+                        <td style="cursor:pointer;" onclick="window.location='../detail.php?id=<?= $r['id'] ?>'"><?= bersih($r['lokasi']) ?></td>
+                        <td style="cursor:pointer;" onclick="window.location='../detail.php?id=<?= $r['id'] ?>'"><?= bersih($r['pelapor_nama']) ?></td>
+                        <td style="cursor:pointer;" onclick="window.location='../detail.php?id=<?= $r['id'] ?>'"><?= bersih($r['tingkat_kerusakan']) ?></td>
+                        <td style="cursor:pointer;" onclick="window.location='../detail.php?id=<?= $r['id'] ?>'"><span class="<?= statusClass($r['status']) ?>"><?= $r['status'] ?></span></td>
+                        <td style="cursor:pointer;" onclick="window.location='../detail.php?id=<?= $r['id'] ?>'"><?= date('d M Y', strtotime($r['created_at'])) ?></td>
+                        <td onclick="event.stopPropagation()">
+                            <form method="post" action="../hapus.php" style="display:inline;"
+                                  onsubmit="return confirm('Hapus laporan <?= bersih($r['kode_tiket']) ?> secara permanen?');">
+                                <input type="hidden" name="id" value="<?= $r['id'] ?>">
+                                <button type="submit" class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red);">Hapus</button>
+                            </form>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endif; ?>
-    </main>
-</div>
-</body>
-</html>
+        <?php include '../includes/footer.php'; ?>
